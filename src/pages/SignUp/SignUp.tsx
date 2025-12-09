@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Button, Input, Link, Logo } from '@/components/ui';
+import { useAuth } from '@/lib/useAuth';
 import './SignUp.css';
 
 export const SignUp: React.FC = () => {
+  const { signup, loading, error } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -11,13 +13,14 @@ export const SignUp: React.FC = () => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Validações
     const newErrors: Record<string, string> = {};
@@ -30,10 +33,27 @@ export const SignUp: React.FC = () => {
     }
 
     setErrors(newErrors);
+    setSuccessMessage('');
 
     if (Object.keys(newErrors).length === 0) {
-      console.log('Form submitted:', formData);
-      // Enviar dados
+      try {
+        await signup({
+          email: formData.email,
+          password: formData.password,
+        });
+        setSuccessMessage('Cadastro realizado com sucesso!');
+        // Limpar formulário
+        setFormData({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+        });
+        // Redirecionar ou fazer outra ação
+        console.log('Usuário cadastrado com sucesso');
+      } catch (err) {
+        console.error('Erro ao cadastrar:', err);
+      }
     }
   };
 
@@ -58,6 +78,18 @@ export const SignUp: React.FC = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="signup-form">
+            {error && (
+              <div className="error-message">
+                {error.message}
+              </div>
+            )}
+
+            {successMessage && (
+              <div className="success-message">
+                {successMessage}
+              </div>
+            )}
+
             <Input
               label="Name"
               name="name"
@@ -98,8 +130,8 @@ export const SignUp: React.FC = () => {
               error={errors.confirmPassword}
             />
 
-            <Button type="submit" fullWidth variant="primary">
-              Register
+            <Button type="submit" fullWidth variant="primary" disabled={loading}>
+              {loading ? 'Registrando...' : 'Register'}
             </Button>
           </form>
         </div>
