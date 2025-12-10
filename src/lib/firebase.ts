@@ -1,5 +1,5 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
 
 // Substitua essas credenciais com as suas do Firebase Console
 const firebaseConfig = {
@@ -9,12 +9,12 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
-};
+}
 
 // Inicializar Firebase
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig)
 
 // Inicializar Authentication
-export const auth = getAuth(app);
+export const auth = getAuth(app)
 
-export default app;
+export default app

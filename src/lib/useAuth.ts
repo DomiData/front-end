@@ -1,92 +1,92 @@
-import { useState } from 'react';
-import type { User } from 'firebase/auth';
+import { useState } from 'react'
+import type { User } from 'firebase/auth'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-} from 'firebase/auth';
-import { auth } from './firebase';
+} from 'firebase/auth'
+import { auth } from './firebase'
 
 export interface AuthCredentials {
-  email: string;
-  password: string;
+  email: string
+  password: string
 }
 
 export interface AuthError {
-  code: string;
-  message: string;
+  code: string
+  message: string
 }
 
 export const useAuth = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<AuthError | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<AuthError | null>(null)
+  const [user, setUser] = useState<User | null>(null)
 
   const signup = async (credentials: AuthCredentials) => {
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         credentials.email,
         credentials.password
-      );
-      setUser(userCredential.user);
-      return userCredential.user;
+      )
+      setUser(userCredential.user)
+      return userCredential.user
     } catch (err) {
-      const firebaseError = err as { code: string; message: string };
-      const errorMessage = getErrorMessage(firebaseError.code);
+      const firebaseError = err as { code: string; message: string }
+      const errorMessage = getErrorMessage(firebaseError.code)
       setError({
         code: firebaseError.code,
         message: errorMessage,
-      });
-      throw firebaseError;
+      })
+      throw firebaseError
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const login = async (credentials: AuthCredentials) => {
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         credentials.email,
         credentials.password
-      );
-      setUser(userCredential.user);
-      return userCredential.user;
+      )
+      setUser(userCredential.user)
+      return userCredential.user
     } catch (err) {
-      const firebaseError = err as { code: string; message: string };
-      const errorMessage = getErrorMessage(firebaseError.code);
+      const firebaseError = err as { code: string; message: string }
+      const errorMessage = getErrorMessage(firebaseError.code)
       setError({
         code: firebaseError.code,
         message: errorMessage,
-      });
-      throw firebaseError;
+      })
+      throw firebaseError
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const logout = async () => {
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
     try {
-      await signOut(auth);
-      setUser(null);
+      await signOut(auth)
+      setUser(null)
     } catch (err) {
-      const firebaseError = err as { code: string; message: string };
+      const firebaseError = err as { code: string; message: string }
       setError({
         code: firebaseError.code,
         message: firebaseError.message,
-      });
-      throw firebaseError;
+      })
+      throw firebaseError
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return {
     signup,
@@ -95,8 +95,8 @@ export const useAuth = () => {
     loading,
     error,
     user,
-  };
-};
+  }
+}
 
 // Função auxiliar para traduzir códigos de erro do Firebase
 const getErrorMessage = (errorCode: string): string => {
@@ -109,7 +109,7 @@ const getErrorMessage = (errorCode: string): string => {
     'auth/operation-not-allowed': 'Operação não permitida',
     'auth/weak-password': 'Senha muito fraca',
     'auth/network-request-failed': 'Erro de conexão',
-  };
+  }
 
-  return errorMessages[errorCode] || 'Erro ao processar solicitação';
-};
+  return errorMessages[errorCode] || 'Erro ao processar solicitação'
+}

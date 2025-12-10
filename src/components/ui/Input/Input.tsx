@@ -1,10 +1,10 @@
-import React from 'react';
-import './Input.css';
+import React from 'react'
+import './Input.css'
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
-  icon?: React.ReactNode;
+  label?: string
+  error?: string
+  icon?: React.ReactNode
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -22,8 +22,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         </div>
         {error && <span className="input-error-message">{error}</span>}
       </div>
-    );
+    )
   }
-);
+)
 
-Input.displayName = 'Input';
+Input.displayName = 'Input'

@@ -1,61 +1,61 @@
-import React, { useState } from 'react';
-import { Button, Input, Link, Logo } from '@/components/ui';
-import { useAuth } from '@/lib/useAuth';
-import './SignUp.css';
+import React, { useState } from 'react'
+import { Button, Input, Link, Logo } from '@/components/ui'
+import { useAuth } from '@/lib/useAuth'
+import './SignUp.css'
 
 export const SignUp: React.FC = () => {
-  const { signup, loading, error } = useAuth();
+  const { signup, loading, error } = useAuth()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-  });
+  })
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [successMessage, setSuccessMessage] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [successMessage, setSuccessMessage] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     // Validações
-    const newErrors: Record<string, string> = {};
+    const newErrors: Record<string, string> = {}
 
-    if (!formData.name) newErrors.name = 'Nome é obrigatório';
-    if (!formData.email) newErrors.email = 'Email é obrigatório';
-    if (!formData.password) newErrors.password = 'Senha é obrigatória';
+    if (!formData.name) newErrors.name = 'Nome é obrigatório'
+    if (!formData.email) newErrors.email = 'Email é obrigatório'
+    if (!formData.password) newErrors.password = 'Senha é obrigatória'
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'As senhas não conferem';
+      newErrors.confirmPassword = 'As senhas não conferem'
     }
 
-    setErrors(newErrors);
-    setSuccessMessage('');
+    setErrors(newErrors)
+    setSuccessMessage('')
 
     if (Object.keys(newErrors).length === 0) {
       try {
         await signup({
           email: formData.email,
           password: formData.password,
-        });
-        setSuccessMessage('Cadastro realizado com sucesso!');
+        })
+        setSuccessMessage('Cadastro realizado com sucesso!')
         // Limpar formulário
         setFormData({
           name: '',
           email: '',
           password: '',
           confirmPassword: '',
-        });
+        })
         // Redirecionar ou fazer outra ação
-        console.log('Usuário cadastrado com sucesso');
+        console.log('Usuário cadastrado com sucesso')
       } catch (err) {
-        console.error('Erro ao cadastrar:', err);
+        console.error('Erro ao cadastrar:', err)
       }
     }
-  };
+  }
 
   return (
     <div className="signup-container">
@@ -78,16 +78,10 @@ export const SignUp: React.FC = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="signup-form">
-            {error && (
-              <div className="error-message">
-                {error.message}
-              </div>
-            )}
+            {error && <div className="error-message">{error.message}</div>}
 
             {successMessage && (
-              <div className="success-message">
-                {successMessage}
-              </div>
+              <div className="success-message">{successMessage}</div>
             )}
 
             <Input
@@ -130,12 +124,17 @@ export const SignUp: React.FC = () => {
               error={errors.confirmPassword}
             />
 
-            <Button type="submit" fullWidth variant="primary" disabled={loading}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="primary"
+              disabled={loading}
+            >
               {loading ? 'Registrando...' : 'Register'}
             </Button>
           </form>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

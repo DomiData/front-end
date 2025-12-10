@@ -1,16 +1,24 @@
-import React from 'react';
-import './Button.css';
+import React from 'react'
+import './Button.css'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline';
-  size?: 'sm' | 'md' | 'lg';
-  fullWidth?: boolean;
-  loading?: boolean;
+  variant?: 'primary' | 'secondary' | 'outline'
+  size?: 'sm' | 'md' | 'lg'
+  fullWidth?: boolean
+  loading?: boolean
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { variant = 'primary', size = 'md', fullWidth = false, loading = false, children, className, ...props },
+    {
+      variant = 'primary',
+      size = 'md',
+      fullWidth = false,
+      loading = false,
+      children,
+      className,
+      ...props
+    },
     ref
   ) => {
     return (
@@ -22,8 +30,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading ? <span className="button-loader">...</span> : children}
       </button>
-    );
+    )
   }
-);
+)
 
-Button.displayName = 'Button';
+Button.displayName = 'Button'

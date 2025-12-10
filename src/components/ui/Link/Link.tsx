@@ -1,8 +1,8 @@
-import React from 'react';
-import './Link.css';
+import React from 'react'
+import './Link.css'
 
 interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
@@ -11,8 +11,8 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
       <a ref={ref} className={`link ${className || ''}`} {...props}>
         {children}
       </a>
-    );
+    )
   }
-);
+)
 
-Link.displayName = 'Link';
+Link.displayName = 'Link'
