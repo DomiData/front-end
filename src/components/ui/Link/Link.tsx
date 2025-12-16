@@ -1,18 +1,29 @@
 import React from 'react'
+import { Link as RouterLink } from 'react-router-dom'
 import './Link.css'
 
-interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface LinkProps {
   children: React.ReactNode
+  href: string
+  className?: string
 }
 
-export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
-  ({ className, children, ...props }, ref) => {
+export const Link: React.FC<LinkProps> = ({ className, children, href, ...props }) => {
+  // Se for link externo, usa <a>
+  if (href.startsWith('http') || href.startsWith('mailto:')) {
     return (
-      <a ref={ref} className={`link ${className || ''}`} {...props}>
+      <a href={href} className={`link ${className || ''}`} {...props}>
         {children}
       </a>
     )
   }
-)
+
+  // Para rotas internas, usa React Router
+  return (
+    <RouterLink to={href} className={`link ${className || ''}`} {...props}>
+      {children}
+    </RouterLink>
+  )
+}
 
 Link.displayName = 'Link'
