@@ -1,7 +1,14 @@
-.signup-container {
+/* .signup-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
+  background-color: #ffffff;
+} */
+
+.signup-container {
+  display: flex;
+  justify-content: center;
+  gap: 10rem;
   background-color: #ffffff;
 }
 
@@ -84,11 +91,14 @@
 
 @media (max-width: 768px) {
   .signup-container {
+    display: grid;
+    gap: 0;
     grid-template-columns: 1fr;
   }
 
   .signup-left {
     padding: 1.5rem;
+    margin-left: 4rem;
   }
 
   .signup-content h1 {

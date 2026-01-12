@@ -1,7 +1,14 @@
-.login-container {
+/* .login-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
+  background-color: #ffffff;
+} */
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  gap: 10rem;
   background-color: #ffffff;
 }
 
@@ -121,11 +128,14 @@
 
 @media (max-width: 768px) {
   .login-container {
+    display: grid;
+    gap: 0;
     grid-template-columns: 1fr;
   }
 
   .login-left {
     padding: 1.5rem;
+    margin-left: 4rem;
   }
 
   .login-content h1 {
