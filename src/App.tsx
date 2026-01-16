@@ -4,6 +4,7 @@ import { Login } from '@/pages/Login'
 import { SignUp } from '@/pages/SignUp'
 import { Home } from './pages/Dashboard/Dashboard'
 import Layout from './components/ui/Layout/Layout'
+import { HeatMap } from './pages/HeatMap/HeatMap'
 
 function App() {
   return (
@@ -16,10 +17,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Home />} />
-          <Route
-            path="mapa-calor"
-            element={<div>Página de Mapa de Calor</div>}
-          />
+          <Route path="mapa-calor" element={<HeatMap />} />
           <Route
             path="importar"
             element={<div>Página de importar dados</div>}
