@@ -7,7 +7,6 @@ import {
 } from 'firebase/auth'
 import { auth } from './firebase'
 
-// Mudar para variável de ambiente depois
 const API_URL = import.meta.env.API_URL || 'http://localhost:8000';
 export interface AuthCredentials {
   email: string
@@ -58,8 +57,7 @@ export const useAuth = () => {
         credentials.email,
         credentials.password
       )
-      const dbUser = await syncUserWithBackend(userCredential.user);
-      console.log("Usuário criado no banco: ", dbUser)
+      syncUserWithBackend(userCredential.user);
 
       setUser(userCredential.user)
       return userCredential.user
@@ -86,8 +84,7 @@ export const useAuth = () => {
         credentials.password
       )
 
-      const dbUser = await syncUserWithBackend(userCredential.user);
-      console.log("Usuário sincronizado no banco: ", dbUser)
+      await syncUserWithBackend(userCredential.user);
 
       setUser(userCredential.user)
       return userCredential.user
