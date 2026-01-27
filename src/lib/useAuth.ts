@@ -7,6 +7,8 @@ import {
 } from 'firebase/auth'
 import { auth } from './firebase'
 
+// Mudar para variável de ambiente depois
+const API_URL = import.meta.env.API_URL || 'http://localhost:8000';
 export interface AuthCredentials {
   email: string
   password: string
@@ -22,6 +24,31 @@ export const useAuth = () => {
   const [error, setError] = useState<AuthError | null>(null)
   const [user, setUser] = useState<User | null>(null)
 
+  const syncUserWithBackend = async (firebaseUser: User) => {
+    try {
+      const token = await firebaseUser.getIdToken()
+
+      const response = await fetch(`${API_URL}/users/sync`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error('Falha ao sincronizar usuário com o sistema.')
+      }
+
+      const dbUser = await response.json()
+      return dbUser
+
+    } catch (err) {
+      console.error("Erro no sync:", err)
+      throw err
+    }
+  }
+
   const signup = async (credentials: AuthCredentials) => {
     setLoading(true)
     setError(null)
@@ -31,6 +58,9 @@ export const useAuth = () => {
         credentials.email,
         credentials.password
       )
+      const dbUser = await syncUserWithBackend(userCredential.user);
+      console.log("Usuário criado no banco: ", dbUser)
+
       setUser(userCredential.user)
       return userCredential.user
     } catch (err) {
@@ -55,6 +85,10 @@ export const useAuth = () => {
         credentials.email,
         credentials.password
       )
+
+      const dbUser = await syncUserWithBackend(userCredential.user);
+      console.log("Usuário sincronizado no banco: ", dbUser)
+
       setUser(userCredential.user)
       return userCredential.user
     } catch (err) {
