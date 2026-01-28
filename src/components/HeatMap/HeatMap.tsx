@@ -29,11 +29,9 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
   const [selectedDiseases, setSelectedDiseases] = useState<string[]>(['dengue'])
   const diseases = getAvailableDiseases()
 
-  // Toggle para selecionar/deselecionar doenças
   const toggleDisease = (diseaseId: string) => {
     setSelectedDiseases(prev => {
       if (prev.includes(diseaseId)) {
-        // Não permite deselecionar se for a única selecionada
         if (prev.length === 1) return prev
         return prev.filter(id => id !== diseaseId)
       } else {
@@ -42,17 +40,14 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
     })
   }
 
-  // Selecionar todas as doenças
   const selectAll = () => {
     setSelectedDiseases(diseases.map(d => d.id))
   }
 
-  // Limpar seleção (mantém apenas a primeira)
   const clearSelection = () => {
     setSelectedDiseases(['dengue'])
   }
 
-  // Prepara os dados de cada doença selecionada com sua cor
   const diseaseLayers = useMemo(() => {
     return selectedDiseases
       .map(diseaseId => {
@@ -123,7 +118,6 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          {/* Uma camada de heat map para cada doença, cada uma com sua cor */}
           {diseaseLayers.map(
             layer =>
               layer && (

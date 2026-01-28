@@ -35,7 +35,6 @@ export const HeatMapLayer: React.FC<HeatMapLayerProps> = ({
     const heatLayer = L.heatLayer(points, defaultOptions)
     heatLayer.addTo(map)
 
-    // Cleanup ao desmontar
     return () => {
       map.removeLayer(heatLayer)
     }
