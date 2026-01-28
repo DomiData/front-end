@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth'
 import { auth } from './firebase'
 
+const API_URL = import.meta.env.API_URL || 'http://localhost:8000';
 export interface AuthCredentials {
   email: string
   password: string
@@ -24,6 +25,31 @@ export const useAuth = () => {
   const [error, setError] = useState<AuthError | null>(null)
   const [user, setUser] = useState<User | null>(null)
 
+  const syncUserWithBackend = async (firebaseUser: User) => {
+    try {
+      const token = await firebaseUser.getIdToken()
+
+      const response = await fetch(`${API_URL}/users/sync`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error('Falha ao sincronizar usuário com o sistema.')
+      }
+
+      const dbUser = await response.json()
+      return dbUser
+
+    } catch (err) {
+      console.error("Erro no sync:", err)
+      throw err
+    }
+  }
+
   const signup = async (credentials: AuthCredentials) => {
     setLoading(true)
     setError(null)
@@ -33,6 +59,7 @@ export const useAuth = () => {
         credentials.email,
         credentials.password
       )
+      syncUserWithBackend(userCredential.user);
 
       // Atualiza o displayName do usuário no Firebase
       if (credentials.name) {
@@ -65,6 +92,9 @@ export const useAuth = () => {
         credentials.email,
         credentials.password
       )
+
+      await syncUserWithBackend(userCredential.user);
+
       setUser(userCredential.user)
       return userCredential.user
     } catch (err) {
