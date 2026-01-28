@@ -18,7 +18,7 @@ export const Home: React.FC = () => {
   return (
     <div className="home-container">
       <div className="home-content">
-        <h1>Bem vindo, {user?.name || 'Usuário'}!</h1>
+        <h1>Bem vindo!</h1>
         <p>Você está logado com o email: {user?.email}</p>
         <Button variant="primary" onClick={handleLogout}>
           Sair
