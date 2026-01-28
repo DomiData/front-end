@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button, Input, Link, Logo } from '@/components/ui'
 import { useAuth } from '@/lib/useAuth'
 import './SignUp.css'
 
 export const SignUp: React.FC = () => {
+  const navigate = useNavigate()
   const { signup, loading, error } = useAuth()
   const [formData, setFormData] = useState({
     name: '',
@@ -40,17 +42,10 @@ export const SignUp: React.FC = () => {
         await signup({
           email: formData.email,
           password: formData.password,
+          name: formData.name,
         })
         setSuccessMessage('Cadastro realizado com sucesso!')
-        // Limpar formulário
-        setFormData({
-          name: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-        })
-        // Redirecionar ou fazer outra ação
-        console.log('Usuário cadastrado com sucesso')
+        navigate('/home')
       } catch (err) {
         console.error('Erro ao cadastrar:', err)
       }
