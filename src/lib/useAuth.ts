@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from 'firebase/auth'
 import { auth } from './firebase'
 
@@ -11,6 +12,7 @@ const API_URL = import.meta.env.API_URL || 'http://localhost:8000';
 export interface AuthCredentials {
   email: string
   password: string
+  name?: string
 }
 
 export interface AuthError {
@@ -58,6 +60,13 @@ export const useAuth = () => {
         credentials.password
       )
       syncUserWithBackend(userCredential.user);
+
+      // Atualiza o displayName do usuário no Firebase
+      if (credentials.name) {
+        await updateProfile(userCredential.user, {
+          displayName: credentials.name,
+        })
+      }
 
       setUser(userCredential.user)
       return userCredential.user

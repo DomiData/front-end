@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button, Input, Link, Logo } from '@/components/ui'
 import { useAuth } from '@/lib/useAuth'
 import './Login.css'
 
 export const Login: React.FC = () => {
+  const navigate = useNavigate()
   const { login, loading, error } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
@@ -36,8 +38,7 @@ export const Login: React.FC = () => {
           password: formData.password,
         })
         setSuccessMessage('Login realizado com sucesso!')
-        // Redirecionar ou fazer outra ação
-        console.log('Usuário logado com sucesso')
+        navigate('/home')
       } catch (err) {
         console.error('Erro ao fazer login:', err)
       }

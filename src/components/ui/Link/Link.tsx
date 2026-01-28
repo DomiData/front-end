@@ -8,7 +8,12 @@ interface LinkProps {
   className?: string
 }
 
-export const Link: React.FC<LinkProps> = ({ className, children, href, ...props }) => {
+export const Link: React.FC<LinkProps> = ({
+  className,
+  children,
+  href,
+  ...props
+}) => {
   // Se for link externo, usa <a>
   if (href.startsWith('http') || href.startsWith('mailto:')) {
     return (
