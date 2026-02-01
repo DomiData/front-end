@@ -18,6 +18,9 @@ export const Home: React.FC = () => {
         </div>
         <div className="header-right">
           <span className="user-email">{user?.email}</span>
+          <Button variant="outline" onClick={() => navigate('/chat')}>
+            Assistente AI
+          </Button>
           <Button variant="primary" onClick={handleLogout}>
             Sair
           </Button>
