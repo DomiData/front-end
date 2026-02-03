@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import React, { useState, useMemo } from 'react'
 import { MapContainer, TileLayer } from 'react-leaflet'
 import { HeatMapLayer } from './HeatMapLayer'
@@ -10,9 +12,15 @@ import {
 } from '@/data/mockDiseaseData'
 import 'leaflet/dist/leaflet.css'
 import './HeatMap.css'
+import { FiltroDatas } from '../FiltroDatas/FiltroDatas'
+import { FiltroLocalizacao } from '../FiltroLocalizacao/FiltroLocalizacao'
 
 interface HeatMapProps {
   className?: string
+}
+export interface FiltroDataState {
+  inicio: string | null
+  fim: string | null
 }
 
 // Função para gerar gradiente baseado na cor da doença
@@ -27,6 +35,11 @@ const generateGradient = (baseColor: string) => ({
 
 export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
   const [selectedDiseases, setSelectedDiseases] = useState<string[]>(['dengue'])
+  const [datas, setDatas] = useState<FiltroDataState>({
+    inicio: null,
+    fim: null,
+  })
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false)
   const diseases = getAvailableDiseases()
 
   const toggleDisease = (diseaseId: string) => {
@@ -47,6 +60,13 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
   const clearSelection = () => {
     setSelectedDiseases(['dengue'])
   }
+
+  const handleMudancaData = (novasDatas: FiltroDataState) => {
+    setDatas(novasDatas)
+    console.log(novasDatas)
+  }
+
+  const handleMudancaCidade = () => {}
 
   const diseaseLayers = useMemo(() => {
     return selectedDiseases
@@ -103,6 +123,44 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
           <p className="multi-select-hint">
             {selectedDiseases.length} doenças selecionadas
           </p>
+        )}
+
+        <div
+          style={{
+            margin: '20px 0',
+          }}
+        >
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="expand-btn"
+          >
+            {showAdvanced ? '▲ Ocultar filtros' : '▼ Filtrar busca'}
+          </button>
+        </div>
+
+        {showAdvanced && (
+          <div className="expandable-area">
+            <div className="dates">
+              <h3>Período de ocorrências</h3>
+              <FiltroDatas onDataChange={handleMudancaData} />
+            </div>
+            <div className="localization">
+              <h3>Localização</h3>
+              <FiltroLocalizacao onCidadeSelected={handleMudancaCidade} />
+            </div>
+
+            <button
+              className="submit-btn"
+              onMouseOver={e =>
+                (e.currentTarget.style.backgroundColor = '#1565c0')
+              }
+              onMouseOut={e =>
+                (e.currentTarget.style.backgroundColor = '#1976d2')
+              }
+            >
+              Aplicar Filtros
+            </button>
+          </div>
         )}
       </div>
 
