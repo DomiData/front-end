@@ -45,7 +45,7 @@ export const SignUp: React.FC = () => {
           name: formData.name,
         })
         setSuccessMessage('Cadastro realizado com sucesso!')
-        navigate('/home')
+        navigate('/mapa')
       } catch (err) {
         console.error('Erro ao cadastrar:', err)
       }
