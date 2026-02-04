@@ -18,6 +18,8 @@ export const FiltroDatas: React.FC<FiltroDatasProps> = ({ onDataChange }) => {
   const [inicio, setInicio] = useState<Dayjs | null>(null)
   const [fim, setFim] = useState<Dayjs | null>(null)
 
+  const hoje = dayjs()
+
   const handleUpdate = (newInicio: Dayjs | null, newFim: Dayjs | null) => {
     onDataChange({
       inicio: newInicio ? newInicio.format('YYYY-MM-DD') : null,
@@ -33,6 +35,7 @@ export const FiltroDatas: React.FC<FiltroDatasProps> = ({ onDataChange }) => {
             label="Data Início"
             format="DD/MM/YYYY"
             value={inicio}
+            maxDate={fim && fim.isBefore(hoje) ? fim : hoje}
             onChange={(val: Dayjs | null) => {
               setInicio(val)
               handleUpdate(val, fim)
@@ -43,7 +46,7 @@ export const FiltroDatas: React.FC<FiltroDatasProps> = ({ onDataChange }) => {
             label="Data Fim"
             value={fim}
             format="DD/MM/YYYY"
-            minDate={inicio || undefined}
+            maxDate={hoje}
             onChange={(val: Dayjs | null) => {
               setFim(val)
               handleUpdate(inicio, val)

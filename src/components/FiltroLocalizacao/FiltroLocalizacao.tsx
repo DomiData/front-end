@@ -9,7 +9,7 @@ export interface Estado {
 }
 
 export interface Cidade {
-  city_code: number
+  id: number
   nome: string
 }
 
@@ -83,7 +83,7 @@ export const FiltroLocalizacao: React.FC<FiltroLocalizacaoProps> = ({
         value={cidadeSelecionada}
         onChange={(_, newValue) => {
           setCidadeSelecionada(newValue)
-          onCidadeSelected(newValue ? newValue.city_code : null)
+          onCidadeSelected(newValue ? newValue.id : null)
         }}
         renderInput={params => (
           <TextField

@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { MapContainer, TileLayer } from 'react-leaflet'
 import { HeatMapLayer } from './HeatMapLayer'
+import api from '@/services/api'
 import {
   CAMPINA_GRANDE_CENTER,
   DEFAULT_ZOOM,
@@ -14,6 +13,7 @@ import 'leaflet/dist/leaflet.css'
 import './HeatMap.css'
 import { FiltroDatas } from '../FiltroDatas/FiltroDatas'
 import { FiltroLocalizacao } from '../FiltroLocalizacao/FiltroLocalizacao'
+import { ChangeView } from '../ChangeView/ChangeView'
 
 interface HeatMapProps {
   className?: string
@@ -33,12 +33,23 @@ const generateGradient = (baseColor: string) => ({
   1.0: baseColor,
 })
 
+interface DiseasePoints {
+  lat: number
+  lng: number
+  intensity: number
+}
+
 export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
-  const [selectedDiseases, setSelectedDiseases] = useState<string[]>(['dengue'])
+  const [selectedDiseases, setSelectedDiseases] = useState<string[]>(['DENG'])
+  const [diseasePoints, setDiseasePoints] = useState<DiseasePoints[]>([])
+
   const [datas, setDatas] = useState<FiltroDataState>({
     inicio: null,
     fim: null,
   })
+  const [selectedCidadeCode, setSelectedCidadeCode] = useState<number | null>(
+    2504009
+  )
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false)
   const diseases = getAvailableDiseases()
 
@@ -48,7 +59,8 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
         if (prev.length === 1) return prev
         return prev.filter(id => id !== diseaseId)
       } else {
-        return [...prev, diseaseId]
+        console.log(diseaseId)
+        return [diseaseId]
       }
     })
   }
@@ -66,7 +78,53 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
     console.log(novasDatas)
   }
 
-  const handleMudancaCidade = () => {}
+  const handleMudancaCidade = (cidadeSelectedCode: number | null) => {
+    setSelectedCidadeCode(cidadeSelectedCode)
+  }
+
+  const isFormComplete = useMemo(() => {
+    return (
+      selectedDiseases.length > 0 &&
+      datas.inicio !== null &&
+      datas.fim !== null &&
+      selectedCidadeCode !== null
+    )
+  }, [selectedDiseases, datas, selectedCidadeCode])
+
+  const mapCenter = useMemo((): [number, number] | null => {
+    if (diseasePoints.length > 0) {
+      return [diseasePoints[2].lat, diseasePoints[2].lng]
+    }
+    return null
+  }, [diseasePoints])
+
+  const fetch = async (payload: any) => {
+    const response = await api.post('/heatmap', payload)
+    const diseasePoints: DiseasePoints[] = response.data
+    console.log(response.data)
+    setDiseasePoints(diseasePoints)
+  }
+
+  const handleAplicarFiltros = async () => {
+    const payload = {
+      filters: {
+        disease_acronym: selectedDiseases[0],
+        start_date: datas.inicio,
+        end_date: datas.fim,
+        city_code: String(selectedCidadeCode),
+      },
+      group_by: 'city',
+      metric: 'count',
+    }
+
+    console.log('PAYLOAD:', JSON.stringify(payload, null, 2))
+
+    try {
+      fetch(payload)
+    } catch (error) {
+      console.error('Erro ao aplicar filtros:', error)
+    }
+  }
 
   const diseaseLayers = useMemo(() => {
     return selectedDiseases
@@ -77,11 +135,26 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
           id: diseaseData.id,
           name: diseaseData.name,
           color: diseaseData.color,
-          points: toHeatmapData(diseaseData.points),
+          points: toHeatmapData(diseasePoints),
           gradient: generateGradient(diseaseData.color),
         }
       })
       .filter(Boolean)
+  }, [selectedDiseases, diseasePoints])
+
+  useEffect(() => {
+    const payload = {
+      filters: {
+        disease_acronym: selectedDiseases[0],
+        start_date: datas.inicio,
+        end_date: datas.fim,
+        city_code: String(selectedCidadeCode),
+      },
+      group_by: 'city',
+      metric: 'count',
+    }
+
+    fetch(payload)
   }, [selectedDiseases])
 
   return (
@@ -150,7 +223,9 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
             </div>
 
             <button
+              disabled={!isFormComplete}
               className="submit-btn"
+              onClick={handleAplicarFiltros}
               onMouseOver={e =>
                 (e.currentTarget.style.backgroundColor = '#1565c0')
               }
@@ -172,6 +247,8 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
           className="heatmap-map"
           scrollWheelZoom={true}
         >
+          {mapCenter && <ChangeView center={mapCenter} />}
+
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -223,12 +300,12 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
       </div>
 
       {/* Info */}
-      <div className="heatmap-info">
+      {/* <div className="heatmap-info">
         <p>
           <strong>📍 Campina Grande, PB</strong>
         </p>
         <p className="info-note">* Dados simulados para demonstração</p>
-      </div>
+      </div> */}
     </div>
   )
 }
