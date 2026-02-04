@@ -48,13 +48,13 @@ export const Login: React.FC = () => {
   return (
     <div className="login-container">
       <div className="login-left">
-        <Logo text="Your Logo" className="login-logo" />
+        <Logo text="Domidata" className="login-logo" />
         <div className="login-content">
-          <h1>Sign in to</h1>
-          <p>Lorem Ipsum is simply the industry's standard dummy text.</p>
+          <h1>Bem-vindo de volta</h1>
+          <p>Plataforma de monitoramento e análise de dados epidemiológicos.</p>
           <div className="login-signup-link">
-            <span>If you don't have an account</span>
-            <Link href="/signup">Register here!</Link>
+            <span>Ainda não tem uma conta?</span>
+            <Link href="/signup">Cadastre-se aqui!</Link>
           </div>
         </div>
       </div>
