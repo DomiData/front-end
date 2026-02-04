@@ -25,7 +25,7 @@ export const DEFAULT_ZOOM = 13
 // Dados mockados por doença
 export const mockDiseaseData: DiseaseData[] = [
   {
-    id: 'dengue',
+    id: 'DENG',
     name: 'Dengue',
     color: '#ff4444',
     points: [
@@ -63,7 +63,7 @@ export const mockDiseaseData: DiseaseData[] = [
     ],
   },
   {
-    id: 'chikungunya',
+    id: 'CHIK',
     name: 'Chikungunya',
     color: '#ff9800',
     points: [
@@ -91,7 +91,7 @@ export const mockDiseaseData: DiseaseData[] = [
     ],
   },
   {
-    id: 'zika',
+    id: 'ZIKA',
     name: 'Zika',
     color: '#9c27b0',
     points: [
@@ -115,8 +115,8 @@ export const mockDiseaseData: DiseaseData[] = [
     ],
   },
   {
-    id: 'covid',
-    name: 'COVID-19',
+    id: 'LEIV',
+    name: 'Leishmaniose Visceral',
     color: '#2196f3',
     points: [
       // Centro (alta concentração)
