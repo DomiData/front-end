@@ -55,13 +55,13 @@ export const SignUp: React.FC = () => {
   return (
     <div className="signup-container">
       <div className="signup-left">
-        <Logo text="Your Logo" className="signup-logo" />
+        <Logo text="Domidata" className="signup-logo" />
         <div className="signup-content">
-          <h1>Sign Up to</h1>
-          <p>Lorem Ipsum is simply the industry's standard dummy text.</p>
+          <h1>Crie sua conta</h1>
+          <p>Acesse dados epidemiológicos e visualize mapas de calor de doenças.</p>
           <div className="signup-login-link">
-            <span>If you already have an account</span>
-            <Link href="/login">Login here!</Link>
+            <span>Já possui uma conta?</span>
+            <Link href="/login">Faça login aqui!</Link>
           </div>
         </div>
       </div>
