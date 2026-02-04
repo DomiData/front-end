@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -6,6 +6,8 @@ import {
   PieChart,
   LogOut,
   Download,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import './Sidebar.css'
 import { useAuth } from '@/lib/useAuth'
@@ -13,23 +15,37 @@ import { useAuth } from '@/lib/useAuth'
 const Sidebar: React.FC = () => {
   const navigate = useNavigate()
   const { logout } = useAuth()
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
   const handleLogout = async () => {
     await logout()
     navigate('/login')
   }
 
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed)
+  }
+
   return (
-    <aside className="sidebar-container">
+    <aside className={`sidebar-container ${isCollapsed ? 'collapsed' : ''}`}>
+      <button
+        className="toggle-btn"
+        onClick={toggleSidebar}
+        title={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
+      >
+        {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+      </button>
+
       <nav className="nav-list">
         <NavLink
           to="/dashboard"
           className={({ isActive }) =>
             isActive ? 'nav-item active' : 'nav-item'
           }
+          title="Dashboard"
         >
           <LayoutDashboard size={20} />
-          <span>Dashboard</span>
+          {!isCollapsed && <span>Dashboard</span>}
         </NavLink>
 
         <NavLink
@@ -37,9 +53,10 @@ const Sidebar: React.FC = () => {
           className={({ isActive }) =>
             isActive ? 'nav-item active' : 'nav-item'
           }
+          title="Mapa de Doenças"
         >
           <BarChart3 size={20} />
-          <span>Mapa de Doenças</span>
+          {!isCollapsed && <span>Mapa de Doenças</span>}
         </NavLink>
 
         <NavLink
@@ -47,9 +64,10 @@ const Sidebar: React.FC = () => {
           className={({ isActive }) =>
             isActive ? 'nav-item active' : 'nav-item'
           }
+          title="Importar Dados"
         >
           <Download size={20} />
-          <span>Importar Dados</span>
+          {!isCollapsed && <span>Importar Dados</span>}
         </NavLink>
 
         <NavLink
@@ -57,21 +75,21 @@ const Sidebar: React.FC = () => {
           className={({ isActive }) =>
             isActive ? 'nav-item active' : 'nav-item'
           }
+          title="Análise Preditiva"
         >
           <PieChart size={20} />
-          <span>Análise Preditiva</span>
+          {!isCollapsed && <span>Análise Preditiva</span>}
         </NavLink>
       </nav>
 
       <div className="logout-section">
         <button
           className="nav-item logout-btn"
-          onClick={() => console.log('Logout acionado')}
+          onClick={handleLogout}
+          title="Logout"
         >
           <LogOut size={20} />
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
-          </button>
+          {!isCollapsed && <span>Logout</span>}
         </button>
       </div>
     </aside>

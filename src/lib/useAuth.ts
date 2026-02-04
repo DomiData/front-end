@@ -8,7 +8,7 @@ import {
 } from 'firebase/auth'
 import { auth } from './firebase'
 
-const API_URL = import.meta.env.API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.API_URL || 'http://localhost:8000'
 export interface AuthCredentials {
   email: string
   password: string
@@ -33,8 +33,8 @@ export const useAuth = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       })
 
       if (!response.ok) {
@@ -43,10 +43,11 @@ export const useAuth = () => {
 
       const dbUser = await response.json()
       return dbUser
-
     } catch (err) {
-      console.error("Erro no sync:", err)
-      throw err
+      // Silently log the error - sync failure shouldn't block registration
+      console.warn('Erro no sync (backend pode estar offline):', err)
+      // Don't throw - allow registration to proceed without backend sync
+      return null
     }
   }
 
@@ -59,7 +60,7 @@ export const useAuth = () => {
         credentials.email,
         credentials.password
       )
-      syncUserWithBackend(userCredential.user);
+      syncUserWithBackend(userCredential.user)
 
       // Atualiza o displayName do usuário no Firebase
       if (credentials.name) {
@@ -93,7 +94,7 @@ export const useAuth = () => {
         credentials.password
       )
 
-      await syncUserWithBackend(userCredential.user);
+      await syncUserWithBackend(userCredential.user)
 
       setUser(userCredential.user)
       return userCredential.user

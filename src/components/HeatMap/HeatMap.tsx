@@ -14,6 +14,7 @@ import './HeatMap.css'
 import { FiltroDatas } from '../FiltroDatas/FiltroDatas'
 import { FiltroLocalizacao } from '../FiltroLocalizacao/FiltroLocalizacao'
 import { ChangeView } from '../ChangeView/ChangeView'
+import { Search } from 'lucide-react'
 
 interface HeatMapProps {
   className?: string
@@ -51,9 +52,34 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
     2504009
   )
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false)
+  const [naturalQuery, setNaturalQuery] = useState<string>('')
+  const [isSearching, setIsSearching] = useState<boolean>(false)
+  const [, setIsNaturalSearchActive] = useState<boolean>(false)
+  const [, setNaturalSearchColor] = useState<string>('#ff4444')
   const diseases = getAvailableDiseases()
 
+  // Detecta a doença mencionada na query e retorna o ID e cor
+  const detectDiseaseFromQuery = (
+    query: string
+  ): { id: string; color: string } | null => {
+    const queryLower = query.toLowerCase()
+    const diseaseKeywords: Record<string, { id: string; color: string }> = {
+      dengue: { id: 'DENG', color: '#ff4444' },
+      chikungunya: { id: 'CHIK', color: '#ff9800' },
+      chik: { id: 'CHIK', color: '#ff9800' },
+      zika: { id: 'ZIKA', color: '#9c27b0' },
+    }
+
+    for (const [keyword, disease] of Object.entries(diseaseKeywords)) {
+      if (queryLower.includes(keyword)) {
+        return disease
+      }
+    }
+    return null
+  }
+
   const toggleDisease = (diseaseId: string) => {
+    setIsNaturalSearchActive(false) // Desativa modo de busca natural ao mudar toggle
     setSelectedDiseases(prev => {
       if (prev.includes(diseaseId)) {
         if (prev.length === 1) return prev
@@ -66,10 +92,12 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
   }
 
   const selectAll = () => {
+    setIsNaturalSearchActive(false)
     setSelectedDiseases(diseases.map(d => d.id))
   }
 
   const clearSelection = () => {
+    setIsNaturalSearchActive(false)
     setSelectedDiseases(['dengue'])
   }
 
@@ -103,6 +131,44 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
     const diseasePoints: DiseasePoints[] = response.data
     console.log(response.data)
     setDiseasePoints(diseasePoints)
+  }
+
+  const handleNaturalSearch = async () => {
+    if (!naturalQuery.trim()) return
+
+    setIsSearching(true)
+    try {
+      // Detecta a doença da query e atualiza o toggle automaticamente
+      const detectedDisease = detectDiseaseFromQuery(naturalQuery)
+      if (detectedDisease) {
+        setSelectedDiseases([detectedDisease.id])
+        setNaturalSearchColor(detectedDisease.color)
+      }
+
+      const response = await api.post('/heatmap/natural-search', {
+        query: naturalQuery,
+      })
+      const points: DiseasePoints[] = response.data.map(
+        (p: { lat: number; lng: number; value: number }) => ({
+          lat: p.lat,
+          lng: p.lng,
+          intensity: p.value,
+        })
+      )
+      console.log('Natural search response:', response.data)
+      setDiseasePoints(points)
+      setIsNaturalSearchActive(true)
+    } catch (error) {
+      console.error('Erro na busca natural:', error)
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleNaturalSearch()
+    }
   }
 
   const handleAplicarFiltros = async () => {
@@ -161,6 +227,40 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
     <div className={`heatmap-wrapper ${className}`}>
       {/* Controles */}
       <div className="heatmap-controls">
+        {/* Busca por Linguagem Natural */}
+        <div className="natural-search-container">
+          <h3>Busca Inteligente</h3>
+          <p className="search-hint">
+            Digite sua busca em linguagem natural, ex: "casos de dengue em João
+            Pessoa"
+          </p>
+          <div className="natural-search-input-wrapper">
+            <input
+              type="text"
+              className="natural-search-input"
+              placeholder="Ex: casos de chikungunya em Campina Grande no último ano"
+              value={naturalQuery}
+              onChange={e => setNaturalQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
+            />
+            <button
+              className="natural-search-button"
+              onClick={handleNaturalSearch}
+              disabled={isSearching || !naturalQuery.trim()}
+            >
+              {isSearching ? (
+                <span className="loading-spinner" />
+              ) : (
+                <Search size={20} />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="search-mode-divider">
+          <span>ou use os filtros avançados</span>
+        </div>
+
         <div className="controls-header">
           <h3>Selecione as Doenças</h3>
           <div className="controls-actions">
