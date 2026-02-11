@@ -58,7 +58,9 @@ export const SignUp: React.FC = () => {
         <Logo text="Domidata" className="signup-logo" />
         <div className="signup-content">
           <h1>Crie sua conta</h1>
-          <p>Acesse dados epidemiológicos e visualize mapas de calor de doenças.</p>
+          <p>
+            Acesse dados epidemiológicos e visualize mapas de calor de doenças.
+          </p>
           <div className="signup-login-link">
             <span>Já possui uma conta?</span>
             <Link href="/login">Faça login aqui!</Link>
