@@ -65,7 +65,7 @@ export const FiltroLocalizacao: React.FC<FiltroLocalizacaoProps> = ({
   }, [estadoSelecionado])
 
   return (
-    <Box sx={{ display: 'flex', gap: 2, mt: 2, width: '45%' }}>
+    <Box sx={{ display: 'flex', gap: 2, mt: 2, width: '100%' }}>
       <Autocomplete
         options={estados}
         getOptionLabel={option => `${option.nome} (${option.sigla})`}

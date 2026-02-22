@@ -15,6 +15,7 @@ import { FiltroDatas } from '../FiltroDatas/FiltroDatas'
 import { FiltroLocalizacao } from '../FiltroLocalizacao/FiltroLocalizacao'
 import { ChangeView } from '../ChangeView/ChangeView'
 import { Search } from 'lucide-react'
+import FullScreenButton from '../FullScreenButton/FullScreenButton'
 
 interface HeatMapProps {
   className?: string
@@ -56,6 +57,9 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
   const [isSearching, setIsSearching] = useState<boolean>(false)
   const [, setIsNaturalSearchActive] = useState<boolean>(false)
   const [, setNaturalSearchColor] = useState<string>('#ff4444')
+
+  const [isModal, setIsModal] = useState(false)
+
   const diseases = getAvailableDiseases()
 
   // Detecta a doença mencionada na query e retorna o ID e cor
@@ -225,9 +229,11 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
 
   return (
     <div className={`heatmap-wrapper ${className}`}>
-      {/* Controles */}
+      {isModal && (
+        <div className="map-overlay" onClick={() => setIsModal(false)} />
+      )}
+
       <div className="heatmap-controls">
-        {/* Busca por Linguagem Natural */}
         <div className="natural-search-container">
           <h3>Busca Inteligente</h3>
           <p className="search-hint">
@@ -272,6 +278,7 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
             </button>
           </div>
         </div>
+
         <div className="disease-buttons">
           {diseases.map(disease => (
             <button
@@ -279,9 +286,7 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
               className={`disease-button ${selectedDiseases.includes(disease.id) ? 'active' : ''}`}
               onClick={() => toggleDisease(disease.id)}
               style={
-                {
-                  '--disease-color': disease.color,
-                } as React.CSSProperties
+                { '--disease-color': disease.color } as React.CSSProperties
               }
             >
               <span
@@ -292,17 +297,8 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
             </button>
           ))}
         </div>
-        {selectedDiseases.length > 1 && (
-          <p className="multi-select-hint">
-            {selectedDiseases.length} doenças selecionadas
-          </p>
-        )}
 
-        <div
-          style={{
-            margin: '20px 0',
-          }}
-        >
+        <div style={{ margin: '20px 0' }}>
           <button
             onClick={() => setShowAdvanced(!showAdvanced)}
             className="expand-btn"
@@ -313,25 +309,21 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
 
         {showAdvanced && (
           <div className="expandable-area">
-            <div className="dates">
-              <h3>Período de ocorrências</h3>
-              <FiltroDatas onDataChange={handleMudancaData} />
-            </div>
-            <div className="localization">
-              <h3>Localização</h3>
-              <FiltroLocalizacao onCidadeSelected={handleMudancaCidade} />
+            <div className="filter-wrapper">
+              <div className="dates">
+                <h3>Período de ocorrências</h3>
+                <FiltroDatas onDataChange={handleMudancaData} />
+              </div>
+              <div className="localization">
+                <h3>Localização</h3>
+                <FiltroLocalizacao onCidadeSelected={handleMudancaCidade} />
+              </div>
             </div>
 
             <button
               disabled={!isFormComplete}
               className="submit-btn"
               onClick={handleAplicarFiltros}
-              onMouseOver={e =>
-                (e.currentTarget.style.backgroundColor = '#1565c0')
-              }
-              onMouseOut={e =>
-                (e.currentTarget.style.backgroundColor = '#1976d2')
-              }
             >
               Aplicar Filtros
             </button>
@@ -339,14 +331,18 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
         )}
       </div>
 
-      {/* Mapa */}
-      <div className="heatmap-container">
+      <div className={`heatmap-container ${isModal ? 'map-modal-mode' : ''}`}>
         <MapContainer
           center={[CAMPINA_GRANDE_CENTER.lat, CAMPINA_GRANDE_CENTER.lng]}
           zoom={DEFAULT_ZOOM}
           className="heatmap-map"
           scrollWheelZoom={true}
         >
+          <FullScreenButton
+            isModal={isModal}
+            onToggle={() => setIsModal(!isModal)}
+          />
+
           {mapCenter && <ChangeView center={mapCenter} />}
 
           <TileLayer
@@ -371,41 +367,34 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
         </MapContainer>
       </div>
 
-      {/* Legenda */}
-      <div className="heatmap-legend">
-        <h4>Doenças Selecionadas</h4>
-        <div className="legend-items">
-          {diseaseLayers.map(
-            layer =>
-              layer && (
-                <div key={layer.id} className="legend-item">
-                  <span
-                    className="legend-color"
-                    style={{ backgroundColor: layer.color }}
-                  />
-                  <span>{layer.name}</span>
-                  <div
-                    className="legend-mini-gradient"
-                    style={{
-                      background: `linear-gradient(to right, #ffffff, ${layer.color})`,
-                    }}
-                  />
-                </div>
-              )
-          )}
+      {!isModal && (
+        <div className="heatmap-legend">
+          <h4>Doenças Selecionadas</h4>
+          <div className="legend-items">
+            {diseaseLayers.map(
+              layer =>
+                layer && (
+                  <div key={layer.id} className="legend-item">
+                    <span
+                      className="legend-color"
+                      style={{ backgroundColor: layer.color }}
+                    />
+                    <span>{layer.name}</span>
+                    <div
+                      className="legend-mini-gradient"
+                      style={{
+                        background: `linear-gradient(to right, #ffffff, ${layer.color})`,
+                      }}
+                    />
+                  </div>
+                )
+            )}
+          </div>
+          <div className="legend-intensity">
+            <span className="legend-label">Intensidade: Baixa → Alta</span>
+          </div>
         </div>
-        <div className="legend-intensity">
-          <span className="legend-label">Intensidade: Baixa → Alta</span>
-        </div>
-      </div>
-
-      {/* Info */}
-      {/* <div className="heatmap-info">
-        <p>
-          <strong>📍 Campina Grande, PB</strong>
-        </p>
-        <p className="info-note">* Dados simulados para demonstração</p>
-      </div> */}
+      )}
     </div>
   )
 }
