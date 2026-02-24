@@ -19,6 +19,8 @@ const Header: React.FC = () => {
         return 'Importar Dados'
       case '/analise':
         return 'Análise Preditiva'
+      case '/chat':
+        return 'Chat IA'
       default:
         return 'Bem-vindo'
     }

@@ -5,6 +5,7 @@ import { Landing } from '@/pages/Landing'
 import { Login } from '@/pages/Login'
 import { SignUp } from '@/pages/SignUp'
 import { Home } from '@/pages/Home'
+import { Chat } from '@/pages/Chat'
 import Layout from './components/Layout/Layout'
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
               path="analise"
               element={<div>Página em desenvolvimento</div>}
             />
+            <Route path="chat" element={<Chat />} />
           </Route>
           {/* <Route path="/home" element={<Home />} /> */}
         </Routes>
