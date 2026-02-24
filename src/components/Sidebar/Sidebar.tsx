@@ -8,6 +8,7 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
+  MessageCircle,
 } from 'lucide-react'
 import './Sidebar.css'
 import { useAuth } from '@/lib/useAuth'
@@ -79,6 +80,17 @@ const Sidebar: React.FC = () => {
         >
           <PieChart size={20} />
           {!isCollapsed && <span>Análise Preditiva</span>}
+        </NavLink>
+
+        <NavLink
+          to="/chat"
+          className={({ isActive }) =>
+            isActive ? 'nav-item active' : 'nav-item'
+          }
+          title="Chat IA"
+        >
+          <MessageCircle size={20} />
+          {!isCollapsed && <span>Chat IA</span>}
         </NavLink>
       </nav>
 
