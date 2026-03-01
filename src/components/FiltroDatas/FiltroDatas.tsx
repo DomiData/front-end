@@ -15,11 +15,9 @@ interface FiltroDatasProps {
 }
 
 export const FiltroDatas: React.FC<FiltroDatasProps> = ({ onDataChange }) => {
-  const [inicio, setInicio] = useState<Dayjs | null>(null)
-  const [fim, setFim] = useState<Dayjs | null>(null)
-
   const hoje = dayjs()
-
+  const [inicio, setInicio] = useState<Dayjs | null>(dayjs('2025-01-01'))
+  const [fim, setFim] = useState<Dayjs | null>(hoje)
   const handleUpdate = (newInicio: Dayjs | null, newFim: Dayjs | null) => {
     onDataChange({
       inicio: newInicio ? newInicio.format('YYYY-MM-DD') : null,

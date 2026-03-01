@@ -15,23 +15,28 @@ export interface Cidade {
 
 interface FiltroLocalizacaoProps {
   onCidadeSelected: (city_code: number | null) => void
+  onEstadoSelected: (state_code: number | null) => void
 }
 
 export const FiltroLocalizacao: React.FC<FiltroLocalizacaoProps> = ({
   onCidadeSelected,
+  onEstadoSelected,
 }) => {
   const [estados, setEstados] = useState<Estado[]>([])
-  const [estadoSelecionado, setEstadoSelecionado] = useState<Estado | null>(
-    null
-  )
+  const [estadoSelecionado, setEstadoSelecionado] = useState<Estado | null>({
+    id: 25,
+    sigla: 'PB',
+    nome: 'Paraíba',
+  })
 
   const [cidades, setCidades] = useState<Cidade[]>([])
   const [loadingCidades, setLoadingCidades] = useState(false)
-  const [cidadeSelecionada, setCidadeSelecionada] = useState<Cidade | null>(
-    null
-  )
+  const [cidadeSelecionada, setCidadeSelecionada] = useState<Cidade | null>({
+    id: 2504009,
+    nome: 'Campina Grande',
+  })
 
-  const handleEstadoChange = (_: any, novoEstado: Estado | null) => {
+  const handleEstadoChange = (newValue: any, novoEstado: Estado | null) => {
     setEstadoSelecionado(novoEstado)
     setCidadeSelecionada(null)
     setCidades([])
@@ -39,6 +44,8 @@ export const FiltroLocalizacao: React.FC<FiltroLocalizacaoProps> = ({
     if (novoEstado) {
       setLoadingCidades(true)
     }
+
+    onEstadoSelected(newValue ? newValue.id : null)
 
     onCidadeSelected(null)
   }
@@ -70,6 +77,7 @@ export const FiltroLocalizacao: React.FC<FiltroLocalizacaoProps> = ({
         options={estados}
         getOptionLabel={option => `${option.nome} (${option.sigla})`}
         onChange={handleEstadoChange}
+        value={estadoSelecionado}
         sx={{ flex: 1 }}
         renderInput={params => <TextField {...params} label="Estado (UF)" />}
       />
