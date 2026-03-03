@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { Send, Bot, User, Loader2, Info, Sparkles } from 'lucide-react'
 import { sendChatMessage, type ChatMessageResponse } from '@/services/chatApi'
 import './Chat.css'
@@ -133,7 +135,15 @@ const Chat: React.FC = () => {
 
                 <div className="message-content">
                   <div className="message-bubble">
-                    <p className="message-text">{message.content}</p>
+                    {message.role === 'assistant' ? (
+                      <div className="markdown-content">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="message-text">{message.content}</p>
+                    )}
                   </div>
 
                   {/* Sources */}
