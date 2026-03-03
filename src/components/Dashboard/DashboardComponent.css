@@ -90,8 +90,6 @@
   font-size: 0.875rem;
 }
 
-/* /////////////////////////////////////////////////////////// */
-
 .analysis-config {
   display: flex;
   gap: 6rem;
@@ -123,7 +121,7 @@
 }
 
 .option-button.active {
-  background: #3b82f6; /* Azul padrão para seleção */
+  background: #3b82f6;
   color: white;
   border-color: #3b82f6;
   box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
@@ -136,7 +134,6 @@
   color: gray;
 }
 
-/* Ajuste no botão de aplicar para ficar alinhado à esquerda conforme seu print */
 .submit-btn {
   margin-top: 24px;
   padding: 12px 24px;
@@ -156,13 +153,25 @@
 
 .charts-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Divide o espaço igualmente */
+  grid-template-columns: 1fr 1fr;
   gap: 24px;
   margin-top: 32px;
 }
 
 @media (max-width: 1100px) {
   .charts-grid {
-    grid-template-columns: 1fr; /* Fica empilhado em telas menores */
+    grid-template-columns: 1fr;
   }
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed; /* Muda o cursor para um sinal de bloqueio */
+  filter: grayscale(0.5); /* Opcional: deixa as cores mais sóbrias */
+}
+
+/* Garante que o hover não funcione quando desabilitado */
+.submit-btn:disabled:hover {
+  transform: none;
+  background-color: #f1f5f9; /* Mantém a cor do estado 'applied' */
 }

@@ -59,7 +59,7 @@ export const DashboardComponent: React.FC = () => {
     fim: null,
   })
   const [selectedCidadeCode, setSelectedCidadeCode] = useState<number | null>(
-    2504009
+    null
   )
 
   const [selectedEstadoCode, setSelectedEstadoCode] = useState<number | null>(
@@ -67,6 +67,8 @@ export const DashboardComponent: React.FC = () => {
   )
 
   const [cityMap, setCityMap] = useState<Record<string, string>>({})
+
+  const [hasPendingChanges, setHasPendingChanges] = useState<boolean>(false)
 
   const diseases = getAvailableDiseases()
 
@@ -78,18 +80,23 @@ export const DashboardComponent: React.FC = () => {
         return [diseaseId]
       }
     })
+
+    setHasPendingChanges(true)
   }
 
   const handleMudancaData = (novasDatas: FiltroDataState) => {
     setDatas(novasDatas)
+    setHasPendingChanges(true)
   }
 
   const handleMudancaCidade = (cidadeSelectedCode: number | null) => {
     setSelectedCidadeCode(cidadeSelectedCode)
+    setHasPendingChanges(true)
   }
 
   const handleMudancaEstado = (cidadeSelectedCode: number | null) => {
     setSelectedEstadoCode(cidadeSelectedCode)
+    setHasPendingChanges(true)
   }
 
   const handleToggleArray = (
@@ -114,6 +121,7 @@ export const DashboardComponent: React.FC = () => {
         }
       }
     })
+    setHasPendingChanges(true)
   }
 
   const updateSummary = (data: any[]) => {
@@ -168,6 +176,8 @@ export const DashboardComponent: React.FC = () => {
       updateSummary(rawData)
     } catch (error) {
       console.error('Erro ao buscar dados do dashboard:', error)
+    } finally {
+      setHasPendingChanges(false)
     }
   }
 
@@ -181,6 +191,7 @@ export const DashboardComponent: React.FC = () => {
       group_by: ['city'],
       metrics: ['count', 'avg_age', 'recovery_rate', 'fatality_rate'],
     }
+
     const response = await api.post('/dashboard', firstPayload)
     const rawData = response.data
 
@@ -280,8 +291,8 @@ export const DashboardComponent: React.FC = () => {
           </div>
 
           <button
-            // disabled={!isFormComplete}
-            className="submit-btn"
+            disabled={!hasPendingChanges}
+            className={`submit-btn ${hasPendingChanges ? 'pending' : 'applied'}`}
             onClick={handleSearch}
           >
             Aplicar filtros
@@ -322,18 +333,24 @@ export const DashboardComponent: React.FC = () => {
             </div>
           </>
         )}
-        <div className="charts-grid">
-          <VolumeChart
-            data={chartData}
-            groupBy={appliedGroupBy}
-            cityMap={cityMap}
-          />
-          <AgeProfileChart
-            data={chartData}
-            groupBy={appliedGroupBy}
-            cityMap={cityMap}
-          />
-        </div>
+        <>
+          {chartData.length > 0 ? (
+            <div className="charts-grid">
+              <VolumeChart
+                data={chartData}
+                groupBy={appliedGroupBy}
+                cityMap={cityMap}
+              />
+              <AgeProfileChart
+                data={chartData}
+                groupBy={appliedGroupBy}
+                cityMap={cityMap}
+              />
+            </div>
+          ) : (
+            <h1>Dados não encontrados</h1>
+          )}
+        </>
       </div>
     </div>
   )

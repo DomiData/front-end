@@ -31,10 +31,9 @@ export const FiltroLocalizacao: React.FC<FiltroLocalizacaoProps> = ({
 
   const [cidades, setCidades] = useState<Cidade[]>([])
   const [loadingCidades, setLoadingCidades] = useState(false)
-  const [cidadeSelecionada, setCidadeSelecionada] = useState<Cidade | null>({
-    id: 2504009,
-    nome: 'Campina Grande',
-  })
+  const [cidadeSelecionada, setCidadeSelecionada] = useState<Cidade | null>(
+    null
+  )
 
   const handleEstadoChange = (newValue: any, novoEstado: Estado | null) => {
     setEstadoSelecionado(novoEstado)

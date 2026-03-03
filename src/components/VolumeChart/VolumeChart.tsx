@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   BarChart,
   Bar,
@@ -33,7 +33,7 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
     return groupBy
       .map(group => {
         if (group === 'city') {
-          const code = item.city_code?.toString()
+          const code = (item.city || item.city_code)?.toString()
 
           return cityMap[code] || code || 'N/A'
         }
@@ -60,6 +60,8 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
     ...item,
     displayName: getLabel(item),
   }))
+
+  useEffect(() => {}, [])
 
   const height = groupBy.includes('health_unit')
     ? data.length > 5
