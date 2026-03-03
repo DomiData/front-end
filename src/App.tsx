@@ -7,6 +7,7 @@ import { SignUp } from '@/pages/SignUp'
 import { Home } from '@/pages/Home'
 import { Chat } from '@/pages/Chat'
 import Layout from './components/Layout/Layout'
+import { Dashboard } from './pages/Dashboard'
 
 function App() {
   return (
@@ -18,10 +19,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
 
           <Route path="/" element={<Layout />}>
-            <Route
-              path="dashboard"
-              element={<div>Página em desenvolvimento</div>}
-            />
+            <Route path="dashboard" element={<Dashboard />} />
             <Route index path="/mapa" element={<Home />} />
             <Route
               path="importar"
