@@ -101,7 +101,7 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
           <Tooltip
             cursor={{ fill: '#f1f5f9' }}
             labelFormatter={label => label}
-            formatter={(value: any, name: string) => {
+            formatter={(value: any, name?: string) => {
               if (name === 'count') {
                 return [value, 'Total de ocorrências']
               }
@@ -121,7 +121,7 @@ export const VolumeChart: React.FC<VolumeChartProps> = ({
             radius={[0, 4, 4, 0]}
             barSize={25}
           >
-            {chartData.map((entry, index) => (
+            {chartData.map((_entry, index) => (
               <Cell key={`cell-${index}`} fill="#3b82f6" />
             ))}
           </Bar>
