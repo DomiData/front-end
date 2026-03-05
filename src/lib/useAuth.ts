@@ -8,7 +8,7 @@ import {
 } from 'firebase/auth'
 import { auth } from './firebase'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL
 export interface AuthCredentials {
   email: string
   password: string
