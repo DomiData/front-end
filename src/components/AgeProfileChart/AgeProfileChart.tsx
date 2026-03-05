@@ -91,14 +91,14 @@ export const AgeProfileChart: React.FC<AgeProfileChartProps> = ({
           <Tooltip
             cursor={{ fill: '#f1f5f9' }}
             labelFormatter={label => label}
-            formatter={(value: any, name: string) => {
+            formatter={(value: any, name?: string) => {
               const labels: Record<string, string> = {
                 avg_age: 'Idade Média',
                 min_age: 'Idade Mínima',
                 max_age: 'Idade Máxima',
               }
 
-              if (!labels[name]) return [null]
+              if (!name || !labels[name]) return [null]
 
               const formattedValue =
                 typeof value === 'number' ? value.toFixed(1) : value

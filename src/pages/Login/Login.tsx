@@ -38,7 +38,7 @@ export const Login: React.FC = () => {
           password: formData.password,
         })
         setSuccessMessage('Login realizado com sucesso!')
-        navigate('/home')
+        navigate('/dashboard')
       } catch (err) {
         console.error('Erro ao fazer login:', err)
       }

@@ -114,6 +114,10 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
     setSelectedCidadeCode(cidadeSelectedCode)
   }
 
+  const handleMudancaEstado = (_estadoCode: number | null) => {
+    // reserved for future use
+  }
+
   const isFormComplete = useMemo(() => {
     return (
       selectedDiseases.length > 0 &&
@@ -316,7 +320,7 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
               </div>
               <div className="localization">
                 <h3>Localização</h3>
-                <FiltroLocalizacao onCidadeSelected={handleMudancaCidade} />
+                <FiltroLocalizacao onCidadeSelected={handleMudancaCidade} onEstadoSelected={handleMudancaEstado} />
               </div>
             </div>
 
