@@ -9,11 +9,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<UserData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  const getDisplayName = (displayName: string | null, email: string | null) => {
+    if (displayName?.trim()) {
+      return displayName.trim()
+    }
+
+    if (email) {
+      return email.split('@')[0]
+    }
+
+    return 'Usuário'
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, firebaseUser => {
       if (firebaseUser) {
         setUser({
-          name: firebaseUser.displayName || '',
+          name: getDisplayName(firebaseUser.displayName, firebaseUser.email),
           email: firebaseUser.email || '',
         })
       } else {
@@ -27,7 +39,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const value: AuthContextType = {
     user,
-    setUser,
     isAuthenticated: !!user,
     isLoading,
   }

@@ -7,7 +7,6 @@ export interface UserData {
 
 export interface AuthContextType {
   user: UserData | null
-  setUser: (userData: UserData | null) => void
   isAuthenticated: boolean
   isLoading: boolean
 }

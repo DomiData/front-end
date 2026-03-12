@@ -3,11 +3,13 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { User, LogOut } from 'lucide-react'
 import './Header.css'
 import { useAuth } from '@/lib/useAuth'
+import { useAuthContext } from '@/lib/useAuthContext'
 
 const Header: React.FC = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { logout } = useAuth()
+  const { user } = useAuthContext()
 
   const getPageTitle = (pathname: string) => {
     switch (pathname) {
@@ -36,7 +38,7 @@ const Header: React.FC = () => {
           <User size={20} color="#666" />
         </div>
 
-        <span className="user-name">Admin</span>
+        <span className="user-name">{user?.name || 'Usuário'}</span>
 
         <div className="divider-vertical"></div>
 
