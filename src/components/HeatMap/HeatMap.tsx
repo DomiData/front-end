@@ -14,8 +14,13 @@ import './HeatMap.css'
 import { FiltroDatas } from '../FiltroDatas/FiltroDatas'
 import { FiltroLocalizacao } from '../FiltroLocalizacao/FiltroLocalizacao'
 import { ChangeView } from '../ChangeView/ChangeView'
-import { Search } from 'lucide-react'
+import { Download, Search } from 'lucide-react'
 import FullScreenButton from '../FullScreenButton/FullScreenButton'
+import {
+  createExportFileName,
+  downloadBlobFile,
+  getFileNameFromDisposition,
+} from '@/utils/export'
 
 interface HeatMapProps {
   className?: string
@@ -41,6 +46,8 @@ interface DiseasePoints {
   intensity: number
 }
 
+type ExportFormat = 'csv' | 'xlsx'
+
 export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
   const [selectedDiseases, setSelectedDiseases] = useState<string[]>(['DENG'])
   const [diseasePoints, setDiseasePoints] = useState<DiseasePoints[]>([])
@@ -55,10 +62,12 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false)
   const [naturalQuery, setNaturalQuery] = useState<string>('')
   const [isSearching, setIsSearching] = useState<boolean>(false)
-  const [, setIsNaturalSearchActive] = useState<boolean>(false)
+  const [isNaturalSearchActive, setIsNaturalSearchActive] =
+    useState<boolean>(false)
   const [, setNaturalSearchColor] = useState<string>('#ff4444')
 
   const [isModal, setIsModal] = useState(false)
+  const [isExporting, setIsExporting] = useState<ExportFormat | null>(null)
 
   const diseases = getAvailableDiseases()
 
@@ -134,6 +143,17 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
     return null
   }, [diseasePoints])
 
+  const buildHeatmapPayload = () => ({
+    filters: {
+      disease_acronym: selectedDiseases[0],
+      start_date: datas.inicio,
+      end_date: datas.fim,
+      city_code: String(selectedCidadeCode),
+    },
+    group_by: 'city',
+    metric: 'count',
+  })
+
   const fetch = async (payload: any) => {
     const response = await api.post('/heatmap', payload)
     const diseasePoints: DiseasePoints[] = response.data
@@ -180,16 +200,7 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
   }
 
   const handleAplicarFiltros = async () => {
-    const payload = {
-      filters: {
-        disease_acronym: selectedDiseases[0],
-        start_date: datas.inicio,
-        end_date: datas.fim,
-        city_code: String(selectedCidadeCode),
-      },
-      group_by: 'city',
-      metric: 'count',
-    }
+    const payload = buildHeatmapPayload()
 
     console.log('PAYLOAD:', JSON.stringify(payload, null, 2))
 
@@ -216,17 +227,41 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
       .filter(Boolean)
   }, [selectedDiseases, diseasePoints])
 
-  useEffect(() => {
-    const payload = {
-      filters: {
-        disease_acronym: selectedDiseases[0],
-        start_date: datas.inicio,
-        end_date: datas.fim,
-        city_code: String(selectedCidadeCode),
-      },
-      group_by: 'city',
-      metric: 'count',
+  const handleExport = async (exportFormat: ExportFormat) => {
+    if (diseasePoints.length === 0 || isNaturalSearchActive) return
+
+    const selectedDisease = diseases.find(d => d.id === selectedDiseases[0])
+    const fallbackFileName = createExportFileName(
+      `heatmap-${selectedDisease?.id || 'dados'}`,
+      exportFormat
+    )
+
+    setIsExporting(exportFormat)
+    try {
+      const response = await api.post(
+        '/export/heatmap',
+        {
+          file_name: `heatmap-${selectedDisease?.id || 'dados'}`,
+          export_format: exportFormat,
+          heatmap_input: buildHeatmapPayload(),
+        },
+        { responseType: 'blob' }
+      )
+
+      const fileName =
+        getFileNameFromDisposition(response.headers['content-disposition']) ||
+        fallbackFileName
+
+      downloadBlobFile(response.data, fileName)
+    } catch (error) {
+      console.error('Erro ao exportar dados do heatmap:', error)
+    } finally {
+      setIsExporting(null)
     }
+  }
+
+  useEffect(() => {
+    const payload = buildHeatmapPayload()
 
     fetch(payload)
   }, [selectedDiseases])
@@ -280,8 +315,39 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
             <button className="action-button" onClick={clearSelection}>
               Limpar
             </button>
+            <button
+              className="action-button export-button"
+              onClick={() => handleExport('csv')}
+              disabled={
+                diseasePoints.length === 0 ||
+                isNaturalSearchActive ||
+                isExporting !== null
+              }
+            >
+              <Download size={14} />
+              CSV
+            </button>
+            <button
+              className="action-button export-button"
+              onClick={() => handleExport('xlsx')}
+              disabled={
+                diseasePoints.length === 0 ||
+                isNaturalSearchActive ||
+                isExporting !== null
+              }
+            >
+              <Download size={14} />
+              XLSX
+            </button>
           </div>
         </div>
+
+        {isNaturalSearchActive && (
+          <p className="export-hint">
+            A exportação do heat map está disponível apenas para resultados dos
+            filtros avançados.
+          </p>
+        )}
 
         <div className="disease-buttons">
           {diseases.map(disease => (
