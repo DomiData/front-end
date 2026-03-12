@@ -3,9 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
   BarChart3,
-  PieChart,
   LogOut,
-  Download,
   ChevronLeft,
   ChevronRight,
   MessageCircle,
@@ -58,28 +56,6 @@ const Sidebar: React.FC = () => {
         >
           <BarChart3 size={20} />
           {!isCollapsed && <span>Mapa de Doenças</span>}
-        </NavLink>
-
-        <NavLink
-          to="/importar"
-          className={({ isActive }) =>
-            isActive ? 'nav-item active' : 'nav-item'
-          }
-          title="Importar Dados"
-        >
-          <Download size={20} />
-          {!isCollapsed && <span>Importar Dados</span>}
-        </NavLink>
-
-        <NavLink
-          to="/analise"
-          className={({ isActive }) =>
-            isActive ? 'nav-item active' : 'nav-item'
-          }
-          title="Análise Preditiva"
-        >
-          <PieChart size={20} />
-          {!isCollapsed && <span>Análise Preditiva</span>}
         </NavLink>
 
         <NavLink
