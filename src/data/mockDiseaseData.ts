@@ -146,6 +146,30 @@ export const mockDiseaseData: DiseaseData[] = [
       { lat: -7.23, lng: -35.855, intensity: 0.4 },
     ],
   },
+  {
+    id: 'LEPT',
+    name: 'Leptospirose',
+    color: '#948010',
+    points: [],
+  },
+  {
+    id: 'IEXO',
+    name: 'Intoxicação Exógena',
+    color: '#a50575',
+    points: [],
+  },
+  {
+    id: 'MENI',
+    name: 'Meningite',
+    color: '#13ad27',
+    points: [],
+  },
+  {
+    id: 'ACGR',
+    name: 'Acidente de trabalho',
+    color: '#5c5c5e',
+    points: [],
+  },
 ]
 
 // Função para obter dados de uma doença específica
