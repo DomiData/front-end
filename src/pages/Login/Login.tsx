@@ -62,7 +62,7 @@ export const Login: React.FC = () => {
       <div className="login-right">
         <div className="login-card">
           <div className="login-header">
-            <h2>Sign In</h2>
+            <h2>Login</h2>
           </div>
 
           <form onSubmit={handleSubmit} className="login-form">
@@ -76,17 +76,17 @@ export const Login: React.FC = () => {
               label="Email"
               name="email"
               type="email"
-              placeholder="Enter email"
+              placeholder="Digite seu email"
               value={formData.email}
               onChange={handleChange}
               error={errors.email}
             />
 
             <Input
-              label="Password"
+              label="Senha"
               name="password"
               type="password"
-              placeholder="Password"
+              placeholder="Digite sua senha"
               value={formData.password}
               onChange={handleChange}
               error={errors.password}
@@ -95,9 +95,9 @@ export const Login: React.FC = () => {
             <div className="login-options">
               <label className="remember-me">
                 <input type="checkbox" />
-                <span>Remember me</span>
+                <span>Lembrar de mim</span>
               </label>
-              <Link href="/forgot-password">Forgot Password?</Link>
+              <Link href="/forgot-password">Esqueceu sua senha?</Link>
             </div>
 
             <Button

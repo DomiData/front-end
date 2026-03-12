@@ -71,7 +71,7 @@ export const SignUp: React.FC = () => {
       <div className="signup-right">
         <div className="signup-card">
           <div className="signup-header">
-            <h2>Sign Up</h2>
+            <h2>Registro</h2>
           </div>
 
           <form onSubmit={handleSubmit} className="signup-form">
@@ -82,10 +82,10 @@ export const SignUp: React.FC = () => {
             )}
 
             <Input
-              label="Name"
+              label="Nome"
               name="name"
               type="text"
-              placeholder="Your name"
+              placeholder="Digite seu nome"
               value={formData.name}
               onChange={handleChange}
               error={errors.name}
@@ -95,27 +95,27 @@ export const SignUp: React.FC = () => {
               label="Email"
               name="email"
               type="email"
-              placeholder="Contact number"
+              placeholder="Digite seu email"
               value={formData.email}
               onChange={handleChange}
               error={errors.email}
             />
 
             <Input
-              label="Password"
+              label="Senha"
               name="password"
               type="password"
-              placeholder="Password"
+              placeholder="Digite sua senha"
               value={formData.password}
               onChange={handleChange}
               error={errors.password}
             />
 
             <Input
-              label="Confirm password"
+              label="Confirmar senha"
               name="confirmPassword"
               type="password"
-              placeholder="Confirm Password"
+              placeholder="Digite sua senha novamente"
               value={formData.confirmPassword}
               onChange={handleChange}
               error={errors.confirmPassword}
@@ -127,7 +127,7 @@ export const SignUp: React.FC = () => {
               variant="primary"
               disabled={loading}
             >
-              {loading ? 'Registrando...' : 'Register'}
+              {loading ? 'Registrando...' : 'Registrar'}
             </Button>
           </form>
         </div>
