@@ -12,6 +12,12 @@ import { KPICard } from '../KPICard/KPICard'
 import { VolumeChart } from '../VolumeChart/VolumeChart'
 import { format } from 'date-fns'
 import { AgeProfileChart } from '../AgeProfileChart/AgeProfileChart'
+import { Download } from 'lucide-react'
+import {
+  createExportFileName,
+  downloadBlobFile,
+  getFileNameFromDisposition,
+} from '@/utils/export'
 
 const groupByOptions = [
   { id: 'city', label: 'Cidade' },
@@ -28,12 +34,36 @@ interface DashboardSummary {
   dadosInconsistentes: number
 }
 
+interface DashboardFilters {
+  disease_acronym: string
+  start_date: string
+  end_date: string
+  min_age: number | null
+  max_age: number | null
+  patient_sex: string
+  city_code: string
+  evolution: string
+  unit_type?: string
+}
+
+interface DashboardQuery {
+  filters: DashboardFilters
+  group_by: string[]
+  metrics: string[]
+}
+
+type DashboardDataRow = Record<string, unknown>
+type ExportFormat = 'csv' | 'xlsx'
+
 export const DashboardComponent: React.FC = () => {
   const [appliedGroupBy, setAppliedGroupBy] = useState<string[]>(['city'])
   const [summary, setSummary] = useState<DashboardSummary | null>(null)
-  const [chartData, setChartData] = useState<any[]>([])
+  const [chartData, setChartData] = useState<DashboardDataRow[]>([])
+  const [rawDashboardData, setRawDashboardData] = useState<DashboardDataRow[]>(
+    []
+  )
   const [selectedDiseases, setSelectedDiseases] = useState<string[]>(['DENG'])
-  const [query, setQuery] = useState({
+  const [query, setQuery] = useState<DashboardQuery>({
     filters: {
       disease_acronym: '',
       start_date: '',
@@ -67,8 +97,12 @@ export const DashboardComponent: React.FC = () => {
   )
 
   const [cityMap, setCityMap] = useState<Record<string, string>>({})
+  const [lastAppliedQuery, setLastAppliedQuery] = useState<DashboardQuery | null>(
+    null
+  )
 
   const [hasPendingChanges, setHasPendingChanges] = useState<boolean>(false)
+  const [isExporting, setIsExporting] = useState<ExportFormat | null>(null)
 
   const diseases = getAvailableDiseases()
 
@@ -145,17 +179,34 @@ export const DashboardComponent: React.FC = () => {
     })
   }
 
+  const buildDashboardQuery = (): DashboardQuery => ({
+    ...query,
+    filters: {
+      ...query.filters,
+      disease_acronym: selectedDiseases[0] || '',
+      start_date: datas.inicio || '2025-01-01',
+      end_date: datas.fim || format(new Date(), 'yyyy-MM-dd'),
+      city_code: selectedCidadeCode?.toString() || '',
+    },
+  })
+
+  const applyDashboardResponse = (
+    rawData: DashboardDataRow[],
+    appliedQuery: DashboardQuery
+  ) => {
+    const processedData = [...rawData]
+      .sort((a, b) => (Number(b.count) || 0) - (Number(a.count) || 0))
+      .slice(0, 10)
+
+    setRawDashboardData(rawData)
+    setChartData(processedData)
+    setAppliedGroupBy(appliedQuery.group_by)
+    setLastAppliedQuery(appliedQuery)
+    updateSummary(rawData)
+  }
+
   const handleSearch = async () => {
-    // Sincronização
-    const finalQuery = {
-      ...query,
-      filters: {
-        disease_acronym: selectedDiseases[0] || '',
-        start_date: datas.inicio || '2025-01-01',
-        end_date: datas.fim || format(new Date(), 'yyyy-dd-MM'),
-        city_code: selectedCidadeCode?.toString() || '',
-      },
-    }
+    const finalQuery = buildDashboardQuery()
 
     if (finalQuery.group_by.length === 0 || finalQuery.metrics.length === 0) {
       alert('Selecione ao menos um agrupamento e uma métrica.')
@@ -164,16 +215,9 @@ export const DashboardComponent: React.FC = () => {
 
     try {
       const response = await api.post('/dashboard', finalQuery)
-      const rawData = response.data
+      const rawData = response.data as DashboardDataRow[]
 
-      const processedData = [...rawData]
-        .sort((a, b) => (b.count || 0) - (a.count || 0))
-        .slice(0, 10)
-
-      console.log('PROCESSED DATA:', processedData)
-      setChartData(processedData)
-      setAppliedGroupBy(query.group_by)
-      updateSummary(rawData)
+      applyDashboardResponse(rawData, finalQuery)
     } catch (error) {
       console.error('Erro ao buscar dados do dashboard:', error)
     } finally {
@@ -182,27 +226,54 @@ export const DashboardComponent: React.FC = () => {
   }
 
   const firstRequest = async () => {
-    const firstPayload = {
+    const firstPayload: DashboardQuery = {
       filters: {
         disease_acronym: 'DENG',
         start_date: '2025-01-01',
-        end_date: format(new Date(), 'yyyy-dd-MM'),
+        end_date: format(new Date(), 'yyyy-MM-dd'),
+        min_age: null,
+        max_age: null,
+        patient_sex: '',
+        city_code: '',
+        evolution: '',
+        unit_type: '',
       },
       group_by: ['city'],
       metrics: ['count', 'avg_age', 'recovery_rate', 'fatality_rate'],
     }
 
     const response = await api.post('/dashboard', firstPayload)
-    const rawData = response.data
+    const rawData = response.data as DashboardDataRow[]
 
-    const processedData = [...rawData]
-      .sort((a, b) => (b.count || 0) - (a.count || 0))
-      .slice(0, 10)
+    applyDashboardResponse(rawData, firstPayload)
+  }
 
-    console.log('PROCESSED DATA:', processedData)
-    setChartData(processedData)
+  const handleExport = async (exportFormat: ExportFormat) => {
+    const dashboardQuery = lastAppliedQuery || buildDashboardQuery()
+    const fallbackFileName = createExportFileName('dashboard', exportFormat)
 
-    updateSummary(rawData)
+    setIsExporting(exportFormat)
+    try {
+      const response = await api.post(
+        '/export/dashboard',
+        {
+          file_name: 'dashboard',
+          export_format: exportFormat,
+          dashboard_input: dashboardQuery,
+        },
+        { responseType: 'blob' }
+      )
+
+      const fileName =
+        getFileNameFromDisposition(response.headers['content-disposition']) ||
+        fallbackFileName
+
+      downloadBlobFile(response.data, fileName)
+    } catch (error) {
+      console.error('Erro ao exportar dados do dashboard:', error)
+    } finally {
+      setIsExporting(null)
+    }
   }
 
   useEffect(() => {
@@ -290,13 +361,31 @@ export const DashboardComponent: React.FC = () => {
             </div>
           </div>
 
-          <button
-            disabled={!hasPendingChanges}
-            className={`submit-btn ${hasPendingChanges ? 'pending' : 'applied'}`}
-            onClick={handleSearch}
-          >
-            Aplicar filtros
-          </button>
+          <div className="dashboard-actions">
+            <button
+              disabled={!hasPendingChanges}
+              className={`submit-btn ${hasPendingChanges ? 'pending' : 'applied'}`}
+              onClick={handleSearch}
+            >
+              Aplicar filtros
+            </button>
+            <button
+              className="secondary-btn"
+              onClick={() => handleExport('csv')}
+              disabled={rawDashboardData.length === 0 || isExporting !== null}
+            >
+              <Download size={16} />
+              Exportar CSV
+            </button>
+            <button
+              className="secondary-btn"
+              onClick={() => handleExport('xlsx')}
+              disabled={rawDashboardData.length === 0 || isExporting !== null}
+            >
+              <Download size={16} />
+              Exportar XLSX
+            </button>
+          </div>
         </div>
       </div>
       <div className="dashboard-content">

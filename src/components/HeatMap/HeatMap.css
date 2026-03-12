@@ -125,10 +125,14 @@
 
 .controls-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
 .action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   padding: 0.25rem 0.75rem;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -142,6 +146,22 @@
 .action-button:hover {
   background: #e0e0e0;
   border-color: #ccc;
+}
+
+.action-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.action-button:disabled:hover {
+  background: #f5f5f5;
+  border-color: #ddd;
+}
+
+.export-hint {
+  margin: 0.75rem 0 0;
+  font-size: 0.82rem;
+  color: #666;
 }
 
 .multi-select-hint {

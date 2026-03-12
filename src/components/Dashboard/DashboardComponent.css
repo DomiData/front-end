@@ -25,6 +25,13 @@
   gap: 8px;
 }
 
+.dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
 .filter-wrapper {
   margin-top: 1rem;
   display: flex;
@@ -47,7 +54,6 @@
 
 .submit-btn {
   max-width: fit-content;
-  margin-top: 1.5rem;
   background-color: #1976d2;
   color: white;
   padding: 10px 24px;
@@ -135,7 +141,6 @@
 }
 
 .submit-btn {
-  margin-top: 24px;
   padding: 12px 24px;
   background-color: #1a73e8;
   color: white;
@@ -174,4 +179,26 @@
 .submit-btn:disabled:hover {
   transform: none;
   background-color: #f1f5f9; /* Mantém a cor do estado 'applied' */
+}
+
+.secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondary-btn:hover:not(:disabled) {
+  background-color: #f8fafc;
+}
+
+.secondary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
