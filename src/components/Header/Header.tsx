@@ -15,10 +15,6 @@ const Header: React.FC = () => {
         return 'Painel Epidemiológico'
       case '/mapa':
         return 'Mapa de Doenças'
-      case '/importar':
-        return 'Importar Dados'
-      case '/analise':
-        return 'Análise Preditiva'
       case '/chat':
         return 'Chat IA'
       default:
