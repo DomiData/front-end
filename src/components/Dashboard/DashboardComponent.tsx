@@ -97,9 +97,8 @@ export const DashboardComponent: React.FC = () => {
   )
 
   const [cityMap, setCityMap] = useState<Record<string, string>>({})
-  const [lastAppliedQuery, setLastAppliedQuery] = useState<DashboardQuery | null>(
-    null
-  )
+  const [lastAppliedQuery, setLastAppliedQuery] =
+    useState<DashboardQuery | null>(null)
 
   const [hasPendingChanges, setHasPendingChanges] = useState<boolean>(false)
   const [isExporting, setIsExporting] = useState<ExportFormat | null>(null)
@@ -369,22 +368,24 @@ export const DashboardComponent: React.FC = () => {
             >
               Aplicar filtros
             </button>
-            <button
-              className="secondary-btn"
-              onClick={() => handleExport('csv')}
-              disabled={rawDashboardData.length === 0 || isExporting !== null}
-            >
-              <Download size={16} />
-              Exportar CSV
-            </button>
-            <button
-              className="secondary-btn"
-              onClick={() => handleExport('xlsx')}
-              disabled={rawDashboardData.length === 0 || isExporting !== null}
-            >
-              <Download size={16} />
-              Exportar XLSX
-            </button>
+            <div className="export-buttons">
+              <button
+                className="secondary-btn"
+                onClick={() => handleExport('csv')}
+                disabled={rawDashboardData.length === 0 || isExporting !== null}
+              >
+                <Download size={16} />
+                Exportar CSV
+              </button>
+              <button
+                className="secondary-btn"
+                onClick={() => handleExport('xlsx')}
+                disabled={rawDashboardData.length === 0 || isExporting !== null}
+              >
+                <Download size={16} />
+                Exportar XLSX
+              </button>
+            </div>
           </div>
         </div>
       </div>
