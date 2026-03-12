@@ -236,7 +236,7 @@ export const DashboardComponent: React.FC = () => {
       <div className="filter-bar">
         <div className="filter-section">
           <div className="input-group">
-            <h3>Doença</h3>
+            <h3>Doenças</h3>
             <div className="disease-buttons">
               {diseases.map(disease => (
                 <button
