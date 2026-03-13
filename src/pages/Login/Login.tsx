@@ -50,7 +50,7 @@ export const Login: React.FC = () => {
       <div className="login-left">
         <Logo text="Domidata" className="login-logo" />
         <div className="login-content">
-          <h1>Bem-vindo de volta</h1>
+          <h1>Bem-vindo(a)</h1>
           <p>Plataforma de monitoramento e análise de dados epidemiológicos.</p>
           <div className="login-signup-link">
             <span>Ainda não tem uma conta?</span>
