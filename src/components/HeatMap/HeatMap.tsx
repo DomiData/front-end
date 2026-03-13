@@ -137,7 +137,6 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
   }, [selectedDiseases, datas, selectedCidadeCode])
 
   const mapCenter = useMemo((): [number, number] | null => {
-    console.log(`PONTOS:`, diseasePoints)
 
     if (diseasePoints.length === 0) return null
 
@@ -192,7 +191,7 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
         (p: { lat: number; lng: number; value: number }) => ({
           lat: p.lat,
           lng: p.lng,
-          intensity: p.value,
+          value: p.value,
         })
       )
       console.log('Natural search response:', response.data)
