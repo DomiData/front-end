@@ -195,6 +195,9 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
         })
       )
       console.log('Natural search response:', response.data)
+      if (points.length == 0) {
+        window.alert("Nenhuma ocorrência encontrada!")
+      }
       setDiseasePoints(points)
       setIsNaturalSearchActive(true)
     } catch (error) {
