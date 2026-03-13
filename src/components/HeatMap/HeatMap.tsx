@@ -144,7 +144,7 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
     let maxPoint = diseasePoints[0]
 
     for (let i = 1; i < diseasePoints.length; i++) {
-      if (diseasePoints[i].value > maxPoint.value) {
+      if (diseasePoints[i].intensity > maxPoint.intensity) {
         maxPoint = diseasePoints[i]
       }
     }
