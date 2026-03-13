@@ -138,8 +138,9 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
 
   const mapCenter = useMemo((): [number, number] | null => {
     if (diseasePoints.length > 0) {
-      return [diseasePoints[2].lat, diseasePoints[2].lng]
+      return [diseasePoints[0].lat, diseasePoints[0].lng]
     }
+    window.alert("Nenhuma ocorrência encontrada!")
     return null
   }, [diseasePoints])
 
