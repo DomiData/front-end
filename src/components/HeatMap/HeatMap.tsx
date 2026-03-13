@@ -140,7 +140,6 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
     if (diseasePoints.length > 0) {
       return [diseasePoints[0].lat, diseasePoints[0].lng]
     }
-    window.alert("Nenhuma ocorrência encontrada!")
     return null
   }, [diseasePoints])
 
@@ -160,6 +159,9 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
     const diseasePoints: DiseasePoints[] = response.data
     console.log(response.data)
     setDiseasePoints(diseasePoints)
+    if (diseasePoints.length == 0) {
+      window.alert("Nenhuma ocorrência encontrada!")
+    }
   }
 
   const handleNaturalSearch = async () => {
