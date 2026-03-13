@@ -115,11 +115,11 @@ export const Landing: React.FC = () => {
             </p>
           </div>
           <div className="landing-feature-card">
-            <div className="feature-icon">📥</div>
-            <h3>Importação de Dados</h3>
+            <div className="feature-icon">📤</div>
+            <h3>Exportação de Dados</h3>
             <p>
-              Importe dados de diferentes fontes para enriquecer a base de
-              informações e manter os registros sempre atualizados.
+              Exporte seus dados e relatórios em diversos formatos para facilitar a análise
+              externa e o compartilhamento de resultados.
             </p>
           </div>
           <div className="landing-feature-card">
