@@ -137,10 +137,19 @@ export const HeatMap: React.FC<HeatMapProps> = ({ className = '' }) => {
   }, [selectedDiseases, datas, selectedCidadeCode])
 
   const mapCenter = useMemo((): [number, number] | null => {
-    if (diseasePoints.length > 0) {
-      return [diseasePoints[0].lat, diseasePoints[0].lng]
+    console.log(`PONTOS:`, diseasePoints)
+
+    if (diseasePoints.length === 0) return null
+
+    let maxPoint = diseasePoints[0]
+
+    for (let i = 1; i < diseasePoints.length; i++) {
+      if (diseasePoints[i].value > maxPoint.value) {
+        maxPoint = diseasePoints[i]
+      }
     }
-    return null
+
+    return [Number(maxPoint.lat), Number(maxPoint.lng)]
   }, [diseasePoints])
 
   const buildHeatmapPayload = () => ({
